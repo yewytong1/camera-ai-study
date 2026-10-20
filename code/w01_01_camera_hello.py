@@ -16,12 +16,14 @@
 小提示：窗口要先点一下，键盘按键才会被程序收到。
 """
 
-# 标准库：os 用来建文件夹，time 用来算帧率
+# 标准库：os 用来建文件夹，time 用来算帧率，datetime 用来给截图起时间戳文件名
 import os
 import time
+from datetime import datetime
 
 # 第三方库：OpenCV 的包名叫 cv2（历史原因，记住就行）
 import cv2
+from img_io import save_image        # 文件顶部，和 import cv2 放一起
 
 # 截图保存目录（和本脚本同级的 shots 文件夹）
 SHOT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "shots")
@@ -52,7 +54,6 @@ def main() -> None:
 
     show_edges = False     # 是否显示边缘检测窗口
     low_threshold = 80     # Canny 边缘检测的低阈值（越小越敏感）
-    shot_index = 1         # 截图编号
 
     # 用于算帧率的变量：记录上一次循环的时间
     prev_time = time.time()
@@ -98,10 +99,17 @@ def main() -> None:
         if key in (ord("q"), 27):        # q 或 ESC 退出
             break
         elif key == ord("s"):            # 截图
-            path = os.path.join(SHOT_DIR, f"shot_{shot_index:03d}.png")
-            cv2.imwrite(path, frame)
-            print("已保存：", path)
-            shot_index += 1
+            # 时间戳命名：不会覆盖以前的图；同一秒内连按就补 _2 _3
+            base = datetime.now().strftime("shot_%Y%m%d_%H%M%S")
+            path = os.path.join(SHOT_DIR, base + ".png")
+            n = 2
+            while os.path.exists(path):
+                path = os.path.join(SHOT_DIR, f"{base}_{n}.png")
+                n += 1
+            if save_image(path, frame):
+                print("已保存：", path)
+            else:
+                print("保存失败：", path)
         elif key == ord("e"):            # 开关边缘窗口
             show_edges = not show_edges
             if not show_edges:

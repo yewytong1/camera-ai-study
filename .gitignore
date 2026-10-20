@@ -2,3 +2,14 @@ shots/
 __pycache__/
 *.pyc
 .vscode/
+
+# 本地笔记：只留本机，不推 GitHub
+笔记/
+
+# ==== 密钥与本地配置：严禁提交（Key 泄露 = 把额度借给陌生人）====
+.env
+.env.*
+*.env
+config.secret.py
+*_secret.py
+secrets.py
