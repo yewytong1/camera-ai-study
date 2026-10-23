@@ -13,3 +13,7 @@ __pycache__/
 config.secret.py
 *_secret.py
 secrets.py
+
+# 图片一律不进仓库（截图/中间产物），需要的话单独放网盘
+*.png
+*.jpg
